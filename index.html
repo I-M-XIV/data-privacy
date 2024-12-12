@@ -177,43 +177,40 @@
                 <p id="result"></p>
 
                 <py-script>
+                    from js import document
+                    from pyodide.ffi import create_proxy
+                    
                     def grade_quiz(event):
                         score = 0
-                        correct_answers = {
-                            'q1a2': "The main purpose of the Data Privacy Act is to protect personal data and set rules for its handling.",
-                            'q2a1': "The National Privacy Commission (NPC) is responsible for enforcing the Data Privacy Act.",
-                            'q3a2': "Individuals can file a complaint with the NPC if their personal data is mishandled."
-                        }
-
                         feedback = []
-
-                        # Check answers and display correct answers
-                        if Element('q1a2').element.checked:
+                        
+                        if document.getElementById('q1a2').checked:
                             score += 1
                         else:
-                            feedback.append(f"1. {correct_answers['q1a2']}")
-
-                        if Element('q2a1').element.checked:
+                            feedback.append("1. The main purpose of the Data Privacy Act is to protect personal data and set rules for its handling.")
+                    
+                        if document.getElementById('q2a1').checked:
                             score += 1
                         else:
-                            feedback.append(f"2. {correct_answers['q2a1']}")
-
-                        if Element('q3a2').element.checked:
+                            feedback.append("2. The National Privacy Commission (NPC) is responsible for enforcing the Data Privacy Act.")
+                    
+                        if document.getElementById('q3a2').checked:
                             score += 1
                         else:
-                            feedback.append(f"3. {correct_answers['q3a2']}")
-
+                            feedback.append("3. Individuals can file a complaint with the NPC if their personal data is mishandled.")
+                    
                         result_text = f"Your Score: {score}/3\n\n"
                         if score == 3:
                             result_text += "Great job! You answered all questions correctly."
                         else:
                             result_text += "Here are the correct answers:\n\n" + '\n\n'.join(feedback)
-
-                        Element('result').element.innerHTML = result_text
-
-                    # Bind the button click event to grade the quiz with the correct argument
-                    Element('submit-btn').element.onclick = grade_quiz
-                </py-script>
+                    
+                        document.getElementById('result').innerHTML = result_text
+                    
+                    # Wrap the function in a persistent proxy for event listeners
+                    proxy = create_proxy(grade_quiz)
+                    document.getElementById('submit-btn').addEventListener('click', proxy)
+                    </py-script>                                                                      
             </section>
         </main>
     </div>
